@@ -3,8 +3,7 @@ package com.rikin.track;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 
-import java.math.BigDecimal;
-import java.util.regex.Matcher;
+import java.util.List;
 import java.util.regex.Pattern;
 
 import org.junit.BeforeClass;
@@ -93,11 +92,11 @@ public class InputTest {
 	
 	@Test
 	public void testInvalidBet() {
-		String invalidBetString="4 10.25"; //invalid
+		/*String invalidBetString="4 10.25"; //invalid
 		//String invalidBetString="4a 10.25";
-		
+		invalidBetString = "4 a";
 		String patternRegex = "(\\d+)(\\s*)(.*)"; //digit followed by space followed by anything
-		String invalidAmountRegex2 = "\\D+";
+		String invalidAmountRegex2 = "\\d+";
 		
 		
 		if(Pattern.matches(patternRegex,  invalidBetString)) {
@@ -115,7 +114,21 @@ public class InputTest {
 				System.out.println("invalid bet amount!!!");
 			}
 					
-		}
+		}*/
+		
+		String text = "4 10.25";
+		ActionType actionType = TrackMain.determineType(text);
+		assertEquals(ActionType.INVALID_COMMAND, actionType);
 			
 	}
+	
+	@Test
+	public void testStubs() {
+		
+		List<String> inputs = TrackMain.setupStubOutput();
+		System.out.println("start test");
+		inputs.forEach(input -> System.out.println(TrackMain.determineType(input).toString()));
+	}
+	
+
 }
