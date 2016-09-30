@@ -1,6 +1,6 @@
 Sample Output:
 
------Main menu----- \n
+-----Main menu----- 
 	R or r to restock inventory
 	Q or q to quit the application
 	W or w [1-7] to set winning horse number
