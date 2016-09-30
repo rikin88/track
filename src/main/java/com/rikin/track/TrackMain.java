@@ -31,7 +31,7 @@ public class TrackMain {
 		
 		Machine machine = Machine.setupInitialData();
 		System.out.println(machine.toString());
-		
+		processInput(inputList, machine);
 		
 	}
 	
@@ -45,16 +45,46 @@ public class TrackMain {
 		inputList.add("10 55");
 		inputList.add("DONE");
 		
-		inputList.forEach(input -> System.out.println(input));
+		System.out.println("Initial stubbed out data:");
+		inputList.forEach(System.out::println);
 		return inputList;
 	}
 	
-	/*public String processInput(List<String> inputCommands) {
-		inputCommands.forEach(action);
-		
+	public static String processInput(List<String> inputCommands, Machine machine) {
+		inputCommands.forEach(input -> processCommand(determineType(input), machine, input));
+
 		StringBuilder output = new StringBuilder();
 		return output.toString();
-	}*/
+	}
+
+	public static void processCommand(ActionType actionType, Machine machine, String input) {
+		switch (actionType) {
+		case RESTOCK:
+			System.err.println("restocking!");
+			machine.restockInventory();
+			System.out.println(machine.toString());
+			break;
+		case SET_WINNER:
+			System.out.println("Setting Winner!");
+			machine.setWinningHorseNumber(Integer.parseInt(input.substring(2)));
+			System.out.println(machine.toString());
+			break;
+		case PLACE_BET:
+			System.out.println("Placing a bet!");
+			break;
+		case INVALID_COMMAND:
+			System.out.println("InvalidCommand!");
+			break;
+		case DONE:
+			System.out.println("Done!");
+			break;
+		case QUIT:
+			System.out.println("Quit!");
+			break;
+		default:
+			break;
+		}
+	}
 	
 	public static boolean passAdditionalTest(String text, String message) {
 		String invalidAmountRegex2 = "\\d+";

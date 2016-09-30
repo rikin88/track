@@ -92,34 +92,9 @@ public class InputTest {
 	
 	@Test
 	public void testInvalidBet() {
-		/*String invalidBetString="4 10.25"; //invalid
-		//String invalidBetString="4a 10.25";
-		invalidBetString = "4 a";
-		String patternRegex = "(\\d+)(\\s*)(.*)"; //digit followed by space followed by anything
-		String invalidAmountRegex2 = "\\d+";
-		
-		
-		if(Pattern.matches(patternRegex,  invalidBetString)) {
-			Pattern p = Pattern.compile(patternRegex);
-			Matcher m = p.matcher(invalidBetString);
-			
-			if(m.matches()) {
-				System.out.println(m.group(1));
-				System.out.println(m.group(2));
-				System.out.println(m.group(3));
-			}
-			
-			String remainingString = m.group(3);
-			if(!Pattern.matches(invalidAmountRegex2, remainingString)) {
-				System.out.println("invalid bet amount!!!");
-			}
-					
-		}*/
-		
 		String text = "4 10.25";
 		ActionType actionType = TrackMain.determineType(text);
-		assertEquals(ActionType.INVALID_COMMAND, actionType);
-			
+		assertEquals(ActionType.INVALID_COMMAND, actionType);		
 	}
 	
 	@Test
