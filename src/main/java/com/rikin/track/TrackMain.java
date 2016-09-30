@@ -23,7 +23,7 @@ public class TrackMain {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		
+		System.out.println(createMenu());
 		List<String> inputList = new ArrayList<String>();
 		boolean keepReading=true;
 		try (Scanner scanner = new Scanner(System.in)) {
@@ -45,6 +45,24 @@ public class TrackMain {
 				}
 			}
 		}
+	}
+
+	/**
+	 * Build the main menu
+	 * 
+	 * @return
+	 */
+	public static String createMenu() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("-----Main menu----- \n");
+		sb.append("\tR or r to restock inventory\n");
+		sb.append("\tQ or q to quit the application\n");
+		sb.append("\tW or w [1-7] to set winning horse number\n");
+		sb.append("\t[1-7] <amount> to specify horse and bet amount\n");
+		sb.append("\tDONE to print output\n");
+		sb.append("---------------");
+
+		return sb.toString();
 	}
 
 	/**
@@ -92,10 +110,12 @@ public class TrackMain {
 				
 			case INVALID_BET_AMOUNT:
 				System.out.println(invalidBetAmount(input));
+				System.out.println(machine.toString());
 				break;
 				
 			case INVALID_COMMAND:
 				System.out.println("INVALID COMMAND: " + input);
+				System.out.println(machine.toString());
 				break;
 				
 			case DONE:
@@ -139,8 +159,14 @@ public class TrackMain {
 		StringTokenizer st = new StringTokenizer(input, " ");
 		
 		int horseNumber = Integer.parseInt(st.nextToken());
+		if(machine.getHorseInformation().getHorses().get(horseNumber)==null) {
+			message = "INVALID HORSE NUMBER: " + horseNumber;
+			return message;
+		}
+		
 		int betAmount = Integer.parseInt(st.nextToken());
 		int payout = machine.placeHorseBet(horseNumber, betAmount);
+		
 		String horseName = machine.getHorseInformation().getHorses().get(horseNumber).getHorseName();
 		
 		if(payout>=0) {
