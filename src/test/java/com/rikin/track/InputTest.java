@@ -3,7 +3,6 @@ package com.rikin.track;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 
-import java.util.List;
 import java.util.regex.Pattern;
 
 import org.junit.BeforeClass;
@@ -13,28 +12,28 @@ public class InputTest {
 	
 	@BeforeClass
 	public static void init() {
-		App app = new App();
+		TrackMain app = new TrackMain();
 	}
 	
 	@Test
     public void testValidRestock() {
 		String input = "R";
-		ActionType output = App.determineType(input);
+		ActionType output = TrackMain.determineType(input);
 		assertEquals(ActionType.RESTOCK, output);
 		
 		input="r";
-		output=App.determineType(input);
+		output=TrackMain.determineType(input);
 		assertEquals(ActionType.RESTOCK, output);
     }
 	
 	@Test
     public void testInvalidRestock() {
 		String input = "B";
-		ActionType output = App.determineType(input);
+		ActionType output = TrackMain.determineType(input);
 		assertNotEquals(ActionType.RESTOCK, output);
 		
 		input="b";
-		output=App.determineType(input);
+		output=TrackMain.determineType(input);
 		assertNotEquals(ActionType.RESTOCK, output);
     }
 	
@@ -42,29 +41,29 @@ public class InputTest {
 	@Test
     public void testValidQuit() {
 		String input = "Q";
-		ActionType output = App.determineType(input);
+		ActionType output = TrackMain.determineType(input);
 		assertEquals(ActionType.QUIT, output);
 		
 		input="q";
-		output=App.determineType(input);
+		output=TrackMain.determineType(input);
 		assertEquals(ActionType.QUIT, output);
     }
 	
 	@Test
     public void testValidSetWinner() {
 		String input = "W 55";
-		ActionType output = App.determineType(input);
+		ActionType output = TrackMain.determineType(input);
 		assertEquals(ActionType.SET_WINNER, output);
 		
 		input="w 55";
-		output=App.determineType(input);
+		output=TrackMain.determineType(input);
 		assertEquals(ActionType.SET_WINNER, output);
     }
 	
 	@Test
     public void testValidPlaceBet() {
 		String input = "5 25";
-		ActionType output = App.determineType(input);
+		ActionType output = TrackMain.determineType(input);
 		assertEquals(ActionType.PLACE_BET, output);
     }
 	
@@ -94,16 +93,16 @@ public class InputTest {
 	public void testInvalidBet() {
 		String text = "4 10.25";
 		ActionType actionType = TrackMain.determineType(text);
-		assertEquals(ActionType.INVALID_COMMAND, actionType);		
+		assertEquals(ActionType.INVALID_BET_AMOUNT, actionType);		
 	}
 	
-	@Test
-	public void testStubs() {
+	
+	/*public void testStubs() {
 		
 		List<String> inputs = TrackMain.setupStubOutput();
 		System.out.println("start test");
 		inputs.forEach(input -> System.out.println(TrackMain.determineType(input).toString()));
-	}
+	}*/
 	
 
 }

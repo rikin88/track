@@ -69,25 +69,21 @@ public class MachineTest {
 		int payout = 0;
 		int betAmount = 50;
 		machine.setWinningHorseNumber(1);
-		int winningHorseNumber = machine.findWinningHorseNumber();
-		Horse winningHorse = machine.getHorseInformation().getHorses().get(winningHorseNumber);
-		System.out.println("odds: " + winningHorse.getHorseOdds());
-		System.out.println("betAmount: " + betAmount);
-		
+
 		betAmount = machine.placeHorseBet(1,50);
 		assertEquals(250, betAmount);
 	}
 	
 	@Test
-	public void deductCashFromInventory() {
+	public void deductCashFromInventoryInsufficientFunds() {
+		Exception ex = null;
 		try {
-			int total = (100*10) + (20*10) + (10*10) + (5*10) + (1*10);
-			System.out.println(total);
-			machine.deductCashFromInventory(1067);
+			machine.deductCashFromInventory(1244);
 		} catch (Exception e) {
-			System.out.println("Insufficient Funds!");
+			System.out.println(e.getMessage());
+			ex = e;
 		}
-		
+		assertTrue(ex instanceof Exception);
 	}
 	
 	@Test
@@ -96,5 +92,20 @@ public class MachineTest {
 		List<Integer> expectedQuantities = new ArrayList<Integer>(Arrays.asList(2,1,1,3,2));
 		List<Integer> actualQuantities = machine.getDollarQuantities(amount);
 		assertEquals(expectedQuantities, actualQuantities);
+	}
+	
+	@Test
+	public void testPlaceHorseBet() {
+		machine.setWinningHorseNumber(1);
+		int payout = machine.placeHorseBet(1, 50);
+		assertEquals(250, payout);
+	}
+	
+	@Test
+	public void testInvalidPlaceHorseBet() {
+		machine.setWinningHorseNumber(1);
+		int payout = machine.placeHorseBet(10,  50);
+		assertEquals(-1, payout);
+		
 	}
 }

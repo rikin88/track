@@ -8,8 +8,16 @@ import java.util.stream.Collectors;
 
 import com.rikin.track.domain.Horse;
 
-
+/**
+ * Machine class holds state information regarding available funds and List of horses 
+ * and allows users to take specific actions such as restock, set winning horse number,
+ * place a bet, print values, etc.
+ * 
+ * @author Rikin Asher
+ *
+ */
 public class Machine {
+	
 	private Map<Integer,Integer> availableFunds;
 	private HorseInformation horseInformation;
 	
@@ -22,7 +30,11 @@ public class Machine {
 		return machine;
 	}
 	
-	public static Map<Integer,Integer> setupInitialFunds() {
+	/**
+	 * Method to set up initial set of funds
+	 * @return
+	 */
+	private static Map<Integer,Integer> setupInitialFunds() {
 		Map<Integer, Integer>initalFunds = new LinkedHashMap<Integer,Integer>();
 		initalFunds.put(1, 10);
 		initalFunds.put(5, 10);
@@ -33,7 +45,11 @@ public class Machine {
 		return initalFunds;
 	}
 	
-	public static HorseInformation setupInitialHorseInformation() {
+	/**
+	 * Method to set up initial horse data
+	 * @return
+	 */
+	private static HorseInformation setupInitialHorseInformation() {
 		
 		HorseInformation horseInfo = new HorseInformation ();
 		Map<Integer, Horse> horses = new LinkedHashMap<Integer,Horse>();
@@ -55,48 +71,55 @@ public class Machine {
 		sb.append(printAvailableFunds());
 		sb.append("\nHorses ---\n");
 		sb.append(printHorseInventory());
-		sb.append("------------\n\n");
+		sb.append("\n");
 		return sb.toString();
 	}
 	
-	public void printAll() {
-		System.out.println("***************");
-		System.out.println(printAvailableFunds());
-		System.out.println(printHorseInventory());
-		System.out.println("***************");
-	}
-	public String printAvailableFunds() {
+
+	private String printAvailableFunds() {
 		
 		StringBuilder sb = new StringBuilder();
 		this.availableFunds.forEach((k,v) -> sb.append("$" + k + ", " + v + "\n"));
 		return sb.toString();
 	}
 	
-	public String printHorseInventory() {
+	private String printHorseInventory() {
 		StringBuilder sb = new StringBuilder();
 		this.horseInformation.getHorses().forEach((k,v) -> sb.append(k + ", " + v.toString() + "\n"));
 		return sb.toString();
 	}
 	
+	/**
+	 * Restocks inventory
+	 */
 	public void restockInventory() {
 		this.availableFunds = setupInitialFunds();
-		//System.out.println("Restock Inventory successfull");
 	}
 	
+	/** 
+	 * Method responsible to set the winning horse number. Returns true if successful. 
+	 * 
+	 * @param horseNumber
+	 * @return
+	 */
 	public boolean setWinningHorseNumber(int horseNumber)  {
 		if(isValidHorseNumber(horseNumber)) {
 			this.horseInformation.getHorses().forEach((k,v) -> v.setDidWin(false));
 			this.horseInformation.getHorses().get(horseNumber).setDidWin(true);
-			System.out.println("Setting winning horse number to: " + horseNumber);
+			//System.out.println("Setting winning horse number to: " + horseNumber);
 			return true;
 		}
 		return false;
 	}
 	
+	/**
+	 * Method responsible to return the number of the winning horse
+	 * @return
+	 */
+	
 	public int findWinningHorseNumber() {
 
 		Map<Integer, Horse> horses = getHorseInformation().getHorses();
-		//Map<Integer, Horse> winningHorse =
 		List<Integer> ids = 
 				horses.entrySet().stream()
 					.filter(e -> e.getValue().isDidWin() == true)
@@ -106,16 +129,23 @@ public class Machine {
 		return ids.get(0);
 	}
 	
-	public boolean isValidHorseNumber(int horseNumber) {
+	private boolean isValidHorseNumber(int horseNumber) {
 		if(horseNumber<0 || horseNumber > horseInformation.getHorses().size()) {
-			//System.out.println("Invalid Horse Number: " +  horseNumber);
 			return false;
 		}
 		return true;
 	}
 	
+	/**
+	 * Method used to place a bet on a specific horse
+	 * Returns a payout if the horsenumber is the winning horse number
+	 * 
+	 * @param horseNumber
+	 * @param betAmount
+	 * @return
+	 */
 	public int placeHorseBet(int horseNumber, int betAmount) {
-		int payout = 0;
+		int payout = -1;
 		if(findWinningHorseNumber()==horseNumber) {
 			Horse h = horseInformation.getHorses().get(horseNumber);
 			int odds = h.getHorseOdds();
@@ -123,7 +153,14 @@ public class Machine {
 		}
 		return payout;
 	}
-
+	
+	/**
+	 * Method used to deduct cash from inventory on succuessful payout.
+	 * 
+	 * @param betAmount
+	 * @return
+	 * @throws Exception
+	 */
 	public Map<Integer, Integer> deductCashFromInventory(int betAmount) throws Exception {
 		//imperativeWay
 		List<Integer> dollarQuantities = getDollarQuantities(betAmount);
@@ -134,27 +171,30 @@ public class Machine {
 				availableFunds.put(i, qty);
 			}
 			else {
-				throw new Exception("InsufficientFunds");
+				throw new Exception("INSUFFICIENT FUNDS: $" + betAmount);
 			}
 		}
 		
-		System.out.println(printAvailableFunds());
 		return availableFunds;
 	}
 	
-	
+	/**
+	 * Method determines the quantity of bills to deduct from cash iventory
+	 * @param dollarAmount
+	 * @return
+	 */
 	public List<Integer> getDollarQuantities(int dollarAmount) {
 		
 		List<Integer> quantity= new ArrayList<Integer>();
 		
-		int remainingBalance = dollarAmount; //275
-		int hundreds = dollarAmount / 100; //2
-		remainingBalance = remainingBalance % 100; //75
-		int twenties = remainingBalance/20; //3
-		remainingBalance = remainingBalance %20; //15
-		int tens = remainingBalance/10; //1
-		remainingBalance = remainingBalance % 10; // 5
-		int fives = remainingBalance/5; //1
+		int remainingBalance = dollarAmount; 
+		int hundreds = dollarAmount / 100; 
+		remainingBalance = remainingBalance % 100; 
+		int twenties = remainingBalance/20; 
+		remainingBalance = remainingBalance %20; 
+		int tens = remainingBalance/10; 
+		remainingBalance = remainingBalance % 10; 
+		int fives = remainingBalance/5; 
 		remainingBalance = remainingBalance %5;
 		int ones = remainingBalance;
 		
@@ -167,11 +207,6 @@ public class Machine {
 		return quantity;
 	}
 	
-	
-	public boolean isValidBetAmount(int betAmount) {
-		//betAmount.
-		return false;
-	}
 	
 	public Map<Integer, Integer> getAvailableFunds() {
 		return availableFunds;

@@ -2,13 +2,29 @@ package com.rikin.track;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
+import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * Main Horse Betting Application
+ * 
+ * @author Rikin Asher
+ *
+ */
 public class TrackMain {
 	
+	private static Machine machine;
+	
+	/**
+	 * Main method responsible to collect user input
+	 * 
+	 * @param args
+	 */
 	public static void main(String[] args) {
-		/*List<String> inputList = new ArrayList<String>();
+		
+		List<String> inputList = new ArrayList<String>();
 		boolean keepReading=true;
 		try (Scanner scanner = new Scanner(System.in)) {
 			while(keepReading) {
@@ -19,74 +35,138 @@ public class TrackMain {
 					break;
 				}
 				else if(text.matches(ActionType.DONE.getPattern())) {
+					machine = Machine.setupInitialData();
+					System.out.println(machine.toString());
+					processInput(inputList, machine);
 					break;
 				}
 				else {
 					inputList.add(text);
 				}
 			}
-		}*/
-		
-		List<String> inputList =  setupStubOutput();
-		
-		Machine machine = Machine.setupInitialData();
-		System.out.println(machine.toString());
-		processInput(inputList, machine);
-		
+		}
 	}
-	
-	public static List<String> setupStubOutput() {
-		List<String> inputList = new ArrayList<String>();
-		inputList.add("R");
-		inputList.add("W 7");
-		inputList.add("1 55");
-		inputList.add("4a 44");
-		inputList.add("4 10.25");
-		inputList.add("10 55");
-		inputList.add("DONE");
-		
-		System.out.println("Initial stubbed out data:");
-		inputList.forEach(System.out::println);
-		return inputList;
-	}
-	
+
+	/**
+	 * This method is responsible for processing the list of commands supplied by the user.
+	 * 
+	 * @param inputCommands
+	 * @param machine
+	 * @return
+	 */
 	public static String processInput(List<String> inputCommands, Machine machine) {
 		inputCommands.forEach(input -> processCommand(determineType(input), machine, input));
 
 		StringBuilder output = new StringBuilder();
 		return output.toString();
 	}
+	
+	/**
+	 * Method determines specific actions to call depending on type of Action
+	 * 
+	 * @param actionType
+	 * @param machine
+	 * @param input
+	 */
 
 	public static void processCommand(ActionType actionType, Machine machine, String input) {
 		switch (actionType) {
-		case RESTOCK:
-			System.err.println("restocking!");
-			machine.restockInventory();
-			System.out.println(machine.toString());
-			break;
-		case SET_WINNER:
-			System.out.println("Setting Winner!");
-			machine.setWinningHorseNumber(Integer.parseInt(input.substring(2)));
-			System.out.println(machine.toString());
-			break;
-		case PLACE_BET:
-			System.out.println("Placing a bet!");
-			break;
-		case INVALID_COMMAND:
-			System.out.println("InvalidCommand!");
-			break;
-		case DONE:
-			System.out.println("Done!");
-			break;
-		case QUIT:
-			System.out.println("Quit!");
-			break;
-		default:
-			break;
-		}
+		
+			case RESTOCK:
+				machine.restockInventory();
+				System.out.println("RESTOCKING INVENTORY");
+				System.out.println(machine.toString());
+				break;
+				
+			case SET_WINNER:
+				if(machine.setWinningHorseNumber(Integer.parseInt(input.substring(2)))) {
+					System.out.println("SETTING WINNING HORSE NUMBER: " + input.substring(2));
+				}
+				System.out.println(machine.toString());
+				break;
+				
+			case PLACE_BET:
+				System.out.println(placeBet(input));
+				System.out.println(machine.toString());
+				break;
+				
+			case INVALID_BET_AMOUNT:
+				System.out.println(invalidBetAmount(input));
+				break;
+				
+			case INVALID_COMMAND:
+				System.out.println("INVALID COMMAND: " + input);
+				break;
+				
+			case DONE:
+				System.out.println("Done!");
+				break;
+				
+			case QUIT:
+				System.out.println("Quit!");
+				break;
+				
+			default:
+				break;
+			}
 	}
 	
-	public static boolean passAdditionalTest(String text, String message) {
+	/**
+	 * Method called when input is considered an invalid bet amount
+	 * 
+	 * @param input
+	 * @return String - message stating invalid bet placed.
+	 */
+	private static String invalidBetAmount(String input) {
+		
+		StringTokenizer st = new StringTokenizer(input, " ");
+		String horseNumber = st.nextToken();
+		String betAmountAsString = st.nextToken();
+		String message = "INVALID BET: " + betAmountAsString;
+		return message;
+	}
+	
+	
+	/** 
+	 * Method called when input is consided to be a valid placed bet
+	 * 
+	 * @param input
+	 * @return String - confirmation message of bet placed.
+	 */
+	private static String placeBet(String input) {
+		
+		String message = "";
+		StringTokenizer st = new StringTokenizer(input, " ");
+		
+		int horseNumber = Integer.parseInt(st.nextToken());
+		int betAmount = Integer.parseInt(st.nextToken());
+		int payout = machine.placeHorseBet(horseNumber, betAmount);
+		String horseName = machine.getHorseInformation().getHorses().get(horseNumber).getHorseName();
+		
+		if(payout>=0) {
+			try {
+				machine.deductCashFromInventory(payout);
+				message = "PAYOUT: " + horseName + ", $" + payout;
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				System.out.println(e.getMessage());
+			}
+		}
+		else {
+			message = "NO PAYOUT: " + horseName;
+		}
+		
+		return message;
+	}
+	
+	/**
+	 * Method to determine invalid bet amount 
+	 * 
+	 * @param text
+	 * @return String - returns the invalid bet amount
+	 */
+	private static String determineInvalidBetAmount(String text) {
+		String errorMessage = null;
 		String invalidAmountRegex2 = "\\d+";
 		String patternRegex = "(\\d+)(\\s*)(.*)"; 
 		
@@ -94,33 +174,37 @@ public class TrackMain {
 			Pattern p = Pattern.compile(patternRegex);
 			Matcher m = p.matcher(text);
 			
+			String remainingString = "";
 			if(m.matches()) {
-				//System.out.println(m.group(1));
-				//System.out.println(m.group(2));
-				//System.out.println(m.group(3));
+				remainingString = m.group(3);
 			}
 			
-			String remainingString = m.group(3);
+			//String remainingString = m.group(3);
 			if(!Pattern.matches(invalidAmountRegex2, remainingString)) {
-				message = "Invalid bet amount! " + remainingString;
-				System.out.println(message);
-				return false;
+				errorMessage = "Invalid bet amount! " + remainingString;
 			}	
 		}
-		return true;
+		return errorMessage;
 	}
 	
+	/**
+	 * Method determines the type of action to be performed 
+	 * 
+	 * @param text
+	 * @return
+	 */
 	public static ActionType determineType(String text) {
 
 		ActionType actionType = null;
 		String message = "";
 		
 		if(text.matches(ActionType.PLACE_BET.getPattern()))  {
-			if(passAdditionalTest(text, message)) {
+			message = determineInvalidBetAmount(text);
+			if(message==null) {
 				actionType = ActionType.PLACE_BET;
 			}
-			else {
-				actionType = ActionType.INVALID_COMMAND;
+			else {				
+				actionType = ActionType.INVALID_BET_AMOUNT;
 			}
 		}
 			//actionType=ActionType.PLACE_BET;
@@ -135,8 +219,6 @@ public class TrackMain {
 		else {
 			actionType=ActionType.INVALID_COMMAND;
 		}
-		
-		//System.out.println("actionType is: " + actionType + " for text: " + text);
 		
 		return actionType;
 	}
