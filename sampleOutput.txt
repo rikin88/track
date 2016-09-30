@@ -11,6 +11,7 @@ Sample Output:
 2 25
 W 4
 4 10.25
+r
 10 55
 DONE
 
@@ -107,14 +108,14 @@ Horses ---
 7, Gin Stinger, 6, Lost
 
 
-INVALID HORSE NUMBER: 10
+RESTOCKING INVENTORY
 
 Inventory ----
 $1, 10
-$5, 9
-$10, 9
-$20, 7
-$100, 8
+$5, 10
+$10, 10
+$20, 10
+$100, 10
 
 Horses ---
 1, That Darn Gray Cat, 5, Lost
@@ -125,4 +126,22 @@ Horses ---
 6, Pa Kettle, 5, Lost
 7, Gin Stinger, 6, Lost
 
+
+INVALID HORSE NUMBER: 10
+
+Inventory ----
+$1, 10
+$5, 10
+$10, 10
+$20, 10
+$100, 10
+
+Horses ---
+1, That Darn Gray Cat, 5, Lost
+2, Fort Utopia, 10, Lost
+3, Count Sheep, 9, Lost
+4, Ms Traitour, 4, Won
+5, Real Princess, 3, Lost
+6, Pa Kettle, 5, Lost
+7, Gin Stinger, 6, Lost
 
