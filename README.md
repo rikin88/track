@@ -6,11 +6,11 @@ The horsetrack application written using Java 8. Here are the instructions to ru
 4. run mvn test 
 5. Right click on TrackMain.java  and run as Java Application
 6. Enter user commands.
-
+7. Type DONE to print output
 
 Sample Output:
 
------Main menu----- 
+-----Main menu----- \n
 	R or r to restock inventory
 	Q or q to quit the application
 	W or w [1-7] to set winning horse number
